@@ -1,0 +1,121 @@
+{
+	"id": "1b2c7e6e-***************************",
+	"acceptMappedClaims": null,
+	"accessTokenAcceptedVersion": null,
+	"addIns": [],
+	"allowPublicClient": null,
+	"appId": "a73f2a1f-***************************",
+	"appRoles": [
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "Users",
+			"displayName": "Users",
+			"id": "c819698b-6852-4fe4-bf06-b14b5e66a890",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "Users"
+		},
+		{
+			"allowedMemberTypes": [
+				"User"
+			],
+			"description": "Admins",
+			"displayName": "Admins",
+			"id": "787cc4cf-dfc4-4f0f-a6d8-afa10cce6f90",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "Admins"
+		}
+	],
+	"oauth2AllowUrlPathMatching": false,
+	"createdDateTime": "2020-12-14T04:11:05Z",
+	"disabledByMicrosoftStatus": null,
+	"groupMembershipClaims": "None",
+	"identifierUris": [],
+	"informationalUrls": {
+		"termsOfService": null,
+		"support": null,
+		"privacy": null,
+		"marketing": null
+	},
+	"keyCredentials": [],
+	"knownClientApplications": [],
+	"logoUrl": null,
+	"logoutUrl": null,
+	"name": "pythonwebapp",
+	"oauth2AllowIdTokenImplicitFlow": false,
+	"oauth2AllowImplicitFlow": false,
+	"oauth2Permissions": [],
+	"oauth2RequirePostResponse": false,
+	"optionalClaims": {
+		"idToken": [],
+		"accessToken": [],
+		"saml2Token": []
+	},
+	"orgRestrictions": [],
+	"parentalControlSettings": {
+		"countriesBlockedForMinors": [],
+		"legalAgeGroupRule": "Allow"
+	},
+	"passwordCredentials": [
+		{
+			"customKeyIdentifier": null,
+			"endDate": "2299-12-31T06:00:00Z",
+			"keyId": "b9e159ad-ced7-407a-96a3-e8c0fedf4174",
+			"startDate": "2020-12-14T04:12:48.127Z",
+			"value": null,
+			"createdOn": "2020-12-14T04:13:43.3039562Z",
+			"hint": "3kN",
+			"displayName": "default"
+		}
+	],
+	"preAuthorizedApplications": [],
+	"publisherDomain": "bjd.demo",
+	"replyUrlsWithType": [
+		{
+			"url": "http://localhost:3000/getAToken",
+			"type": "Web"
+		}
+	],
+	"requiredResourceAccess": [
+		{
+			"resourceAppId": "db185b06-***************************",
+			"resourceAccess": [
+				{
+					"id": "b6abd561-***************************",
+					"type": "Scope"
+				},
+				{
+					"id": "9a42815b-***************************",
+					"type": "Role"
+				}
+			]
+		},
+		{
+			"resourceAppId": "00000003-0000-0000-c000-000000000000",
+			"resourceAccess": [
+				{
+					"id": "bc024368-1153-4739-b217-4326f2e966d0",
+					"type": "Scope"
+				},
+				{
+					"id": "b340eb25-3456-403f-be2f-af7a0d370277",
+					"type": "Scope"
+				},
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			]
+		}
+	],
+	"samlMetadataUrl": null,
+	"signInUrl": null,
+	"signInAudience": "AzureADMyOrg",
+	"tags": [],
+	"tokenEncryptionKeyId": null
+}

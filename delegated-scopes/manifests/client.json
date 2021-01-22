@@ -1,0 +1,88 @@
+{
+	"id": "5cbddee1-***************************",
+	"acceptMappedClaims": null,
+	"accessTokenAcceptedVersion": null,
+	"addIns": [],
+	"allowPublicClient": null,
+	"appId": "bc8819cc-***************************",
+	"appRoles": [],
+	"oauth2AllowUrlPathMatching": false,
+	"createdDateTime": "2020-12-12T19:10:37Z",
+	"disabledByMicrosoftStatus": null,
+	"groupMembershipClaims": null,
+	"identifierUris": [],
+	"informationalUrls": {
+		"termsOfService": null,
+		"support": null,
+		"privacy": null,
+		"marketing": null
+	},
+	"keyCredentials": [],
+	"knownClientApplications": [],
+	"logoUrl": null,
+	"logoutUrl": null,
+	"name": "client",
+	"oauth2AllowIdTokenImplicitFlow": false,
+	"oauth2AllowImplicitFlow": false,
+	"oauth2Permissions": [],
+	"oauth2RequirePostResponse": false,
+	"optionalClaims": null,
+	"orgRestrictions": [],
+	"parentalControlSettings": {
+		"countriesBlockedForMinors": [],
+		"legalAgeGroupRule": "Allow"
+	},
+	"passwordCredentials": [
+		{
+			"customKeyIdentifier": null,
+			"endDate": "2299-12-31T06:00:00Z",
+			"keyId": "4100e6c2-2508-4c3b-98a9-f79d83d4c3e2",
+			"startDate": "2020-12-12T19:10:21.951Z",
+			"value": null,
+			"createdOn": "2020-12-12T19:11:15.2983424Z",
+			"hint": ".aT",
+			"displayName": "default"
+		}
+	],
+	"preAuthorizedApplications": [],
+	"publisherDomain": "bjdazure.tech",
+	"replyUrlsWithType": [],
+	"requiredResourceAccess": [
+		{
+			"resourceAppId": "db185b06-***************************",
+			"resourceAccess": [
+				{
+					"id": "9a42815b-e62c-4a3d-9112-d84e362ccc3e",
+					"type": "Role"
+				},
+				{
+					"id": "ccc06fea-16ee-4838-94c1-d17b2fc9d216",
+					"type": "Role"
+				}
+			]
+		},
+		{
+			"resourceAppId": "494d5cb6-***************************",
+			"resourceAccess": [
+				{
+					"id": "c9feff7b-90b6-4811-89de-48c70149ff04",
+					"type": "Role"
+				}
+			]
+		},
+		{
+			"resourceAppId": "00000003-0000-0000-c000-000000000000",
+			"resourceAccess": [
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			]
+		}
+	],
+	"samlMetadataUrl": null,
+	"signInUrl": null,
+	"signInAudience": "AzureADMyOrg",
+	"tags": [],
+	"tokenEncryptionKeyId": null
+}

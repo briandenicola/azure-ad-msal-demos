@@ -1,0 +1,122 @@
+{
+	"id": "08568909-***************************",
+	"acceptMappedClaims": null,
+	"accessTokenAcceptedVersion": null,
+	"addIns": [],
+	"allowPublicClient": null,
+	"appId": "db185b06-***************************",
+	"appRoles": [
+		{
+			"allowedMemberTypes": [
+				"User",
+				"Application"
+			],
+			"description": "access_as_app",
+			"displayName": "access_as_app",
+			"id": "9a42815b-e62c-4a3d-9112-d84e362ccc3e",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"value": "access_as_app"
+		}
+	],
+	"oauth2AllowUrlPathMatching": false,
+	"createdDateTime": "2020-12-14T03:12:17Z",
+	"disabledByMicrosoftStatus": null,
+	"groupMembershipClaims": "SecurityGroup",
+	"identifierUris": [
+		"api://db185b06-***************************"
+	],
+	"informationalUrls": {
+		"termsOfService": null,
+		"support": null,
+		"privacy": null,
+		"marketing": null
+	},
+	"keyCredentials": [],
+	"knownClientApplications": [],
+	"logoUrl": null,
+	"logoutUrl": null,
+	"name": "api",
+	"oauth2AllowIdTokenImplicitFlow": true,
+	"oauth2AllowImplicitFlow": false,
+	"oauth2Permissions": [
+		{
+			"adminConsentDescription": "User.ReadBasic.All",
+			"adminConsentDisplayName": "User.ReadBasic.All",
+			"id": "b6abd561-***************************",
+			"isEnabled": true,
+			"lang": null,
+			"origin": "Application",
+			"type": "User",
+			"userConsentDescription": null,
+			"userConsentDisplayName": "User.ReadBasic.All",
+			"value": "User.ReadBasic.All"
+		}
+	],
+	"oauth2RequirePostResponse": false,
+	"optionalClaims": {
+		"idToken": [
+			{
+				"name": "groups",
+				"source": null,
+				"essential": false,
+				"additionalProperties": [
+					"emit_as_roles"
+				]
+			}
+		],
+		"accessToken": [
+			{
+				"name": "groups",
+				"source": null,
+				"essential": false,
+				"additionalProperties": [
+					"emit_as_roles"
+				]
+			}
+		],
+		"saml2Token": [
+			{
+				"name": "groups",
+				"source": null,
+				"essential": false,
+				"additionalProperties": []
+			}
+		]
+	},
+	"orgRestrictions": [],
+	"parentalControlSettings": {
+		"countriesBlockedForMinors": [],
+		"legalAgeGroupRule": "Allow"
+	},
+	"passwordCredentials": [],
+	"preAuthorizedApplications": [],
+	"publisherDomain": "bjdazure.tech",
+	"replyUrlsWithType": [
+		{
+			"url": "https://localhost:5001",
+			"type": "Web"
+		}
+	],
+	"requiredResourceAccess": [
+		{
+			"resourceAppId": "00000003-0000-0000-c000-000000000000",
+			"resourceAccess": [
+				{
+					"id": "bc024368-1153-4739-b217-4326f2e966d0",
+					"type": "Scope"
+				},
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			]
+		}
+	],
+	"samlMetadataUrl": null,
+	"signInUrl": null,
+	"signInAudience": "AzureADMyOrg",
+	"tags": [],
+	"tokenEncryptionKeyId": null
+}
