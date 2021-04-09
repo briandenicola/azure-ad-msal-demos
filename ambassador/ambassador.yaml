@@ -1,0 +1,34 @@
+apiVersion: getambassador.io/v2
+kind:  Mapping
+metadata:
+  name:  api-mapping
+spec:
+  prefix: /
+  service: api
+---
+apiVersion: getambassador.io/v2
+kind: Filter
+metadata:
+  name: azure-ad
+spec:
+  OAuth2:
+    authorizationURL: {{ print "https://login.microsoftonline.com/" .Values.tenantID "/v2.0" }}
+    clientID: {{ .Values.clientId }}
+    secret: {{ .Values.clientId_secret }}
+    protectedOrigins:
+    - origin: {{ print "https://" .Values.ambassador_uri }}
+    allowMalformedAccessToken: false
+---
+apiVersion: getambassador.io/v2
+kind: FilterPolicy
+metadata:
+  name: azure-policy
+spec:
+  rules:
+    - host: "*"
+      path: /WeatherForecast/getapp
+      filters:
+        - name: azure-ad
+          arguments:
+            scope:
+            - {{ print "api://" .Values.api_clientID "/Api.Read.All" }}
