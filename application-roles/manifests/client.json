@@ -1,7 +1,7 @@
 {
 	"id": "1d5216d4-***************************",
 	"acceptMappedClaims": null,
-	"accessTokenAcceptedVersion": null,
+	"accessTokenAcceptedVersion": 2,
 	"addIns": [],
 	"allowPublicClient": null,
 	"appId": "eb0f6102-***************************",
