@@ -68,18 +68,22 @@ _* Copy the SubscriptionKey from the output_
 
 ## Deploy UI
 1. Update ui\apiConfig.js with proper values defined above
+```
 const apiConfig = {
     graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
     directEndpoint: "https://{{replace_me_functionName}}.azurewebsites.net/api/headers",
     apimEndpoint: "https://{{replace_me_apimName}}.azure-api.net/api/headers",
     apimSubscriptionKey: "{{replace_me_apim_subscription_key}}" #Taken from the Infrastructure Deployment Output
 };
+```
 2. Update ui\authConfig.js with uiClientID Azure AD Client ID and values defined above
+```
 const msalConfig = {
     auth: {
         clientId: "{{replace_me_uiClientID}}",
         authority: "https://login.microsoftonline.com/{{replace_me_aad_tenant_id}}",
         redirectUri: "https://{{replace_me_uiStorageName}}.z19.web.core.windows.net",
     },
-3. Publish to Storage Account Name
+```
+3. Publish to Storage Account Name:
 * az storage copy --source-local-path "ui/*" --destination-account-name {{uiStorageName}} --destination-container \$web --recursive --put-md5
