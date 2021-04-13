@@ -8,9 +8,9 @@
 
 ## Define Parameters
 _Define the following in infrastructure\azuredeploy.parameters.json and keep a copy of the values handy. They will referenced throughout the setup_
-    * functionName - Name of the function app to host your API
-    * apimName - Name of Azure API Management to protect your API
-    * uiStorageName - Name of Azure Storage to host the APP UI
+* functionName - Name of the function app to host your API
+* apimName - Name of Azure API Management to protect your API
+* uiStorageName - Name of Azure Storage to host the APP UI
 
 ## Create Azure AD Application Registrations 
 ### API 
