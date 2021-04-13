@@ -1,0 +1,315 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionName": {
+            "type": "String"
+        },
+        "apimName": {
+            "type": "String"
+        },
+        "uiStorageName": {
+            "type": "String"
+        },
+        "tenantId": {
+            "type": "String"
+        },
+        "apiClientId": {
+            "type": "String"
+        },
+        "apimClientId": {
+            "type": "String"
+        }
+    },
+    "variables": {
+       "serverfarmName": "[concat('hosting-', parameters('functionName'), '-ac09')]",
+       "functionStorageName":  "[concat(parameters('functionName'), 'sa01')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-01-01",
+            "name": "[parameters('uiStorageName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-01-01",
+            "name": "[variables('functionStorageName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[variables('serverfarmName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('functionName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmName'))]"
+            ],
+            "kind": "functionapp",
+            "properties": {
+                "enabled": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('functionName'), '/web')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('functionName'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "allowedOrigins": [
+                        "https://functions.azure.com",
+                        "https://functions-staging.azure.com",
+                        "https://functions-next.azure.com",
+                        "[concat('https://',parameters('uiStorageName') ,'.z19.web.core.windows.net')]"
+                    ],
+                    "supportCredentials": false
+                }
+            }
+        },
+		{
+			"name": "[concat(parameters('functionName'), '/appsettings')]",
+			"type": "Microsoft.Web/sites/config",
+			"apiVersion": "2018-02-01",
+        "location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites/', parameters('functionName'))]",
+			],
+			"properties": {
+				"FUNCTIONS_WORKER_RUNTIME": "dotnet",
+				"AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), '2017-06-01').keys[0].value)]",
+				"FUNCTIONS_EXTENSION_VERSION": "~3",
+				"WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')),'2017-06-01').keys[0].value)]",
+				"WEBSITE_CONTENTSHARE":	"[toLower(parameters('functionName'))]",
+			}
+		},
+        {
+            "type": "Microsoft.ApiManagement/service",
+            "apiVersion": "2020-12-01",
+            "name": "[parameters('apimName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Consumption",
+                "capacity": 0
+            },
+            "properties": {
+                "publisherEmail": "brian@noreply.com",
+                "publisherName": "azure.tech",
+                "hostnameConfigurations": [
+                    {
+                        "type": "Proxy",
+                        "hostName": "[concat(parameters('apimName'), '.azure-api.net')]",
+                        "negotiateClientCertificate": false,
+                        "defaultSslBinding": true
+                    }
+                ],
+                "customProperties": {
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "false",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "false",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "false",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "false",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "false",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2": "false"
+                },
+                "virtualNetworkType": "None",
+                "apiVersionConstraint": {}
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/sample-api')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "displayName": "sample-api",
+                "apiRevision": "1",
+                "description": "Import from Function App",
+                "subscriptionRequired": true,
+                "path": "api",
+                "protocols": [
+                    "https"
+                ],
+                "isCurrent": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/authorizationServers",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/serverless-oauth-config')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "displayName": "serverless-oauth-config",
+                "clientRegistrationEndpoint": "https://azure.tech",
+                "authorizationEndpoint": "[concat('https://login.microsoftonline.com/', parameters('tenantId'), '/oauth2/v2.0/authorize')]",
+                "authorizationMethods": [
+                    "GET"
+                ],
+                "clientAuthenticationMethod": [
+                    "Body"
+                ],
+                "tokenBodyParameters": [],
+                "tokenEndpoint": "[concat('https://login.microsoftonline.com/', parameters('tenantId'), '/oauth2/v2.0/token')]",
+                "supportState": false,
+                "defaultScope": "[concat('api://', parameters('apiClientId'), '/App.Read.All')]",
+                "grantTypes": [
+                    "authorizationCode"
+                ],
+                "bearerTokenSendingMethods": [
+                    "authorizationHeader"
+                ],
+                "clientId": "[parameters('apimClientId')]"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/backends",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/sample-api-backend')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "description": "backend",
+                "url": "[concat('https://', parameters('functionName'), '.azurewebsites.net/api')]",
+                "protocol": "http",
+                "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/sites/', parameters('functionName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/policies",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "value": "<!--\r\n    IMPORTANT:\r\n    - Policy elements can appear only within the <inbound>, <outbound>, <backend> section elements.\r\n    - Only the <forward-request> policy element can appear within the <backend> section element.\r\n    - To apply a policy to the incoming request (before it is forwarded to the backend service), place a corresponding policy element within the <inbound> section element.\r\n    - To apply a policy to the outgoing response (before it is sent back to the caller), place a corresponding policy element within the <outbound> section element.\r\n    - To add a policy position the cursor at the desired insertion point and click on the round button associated with the policy.\r\n    - To remove a policy, delete the corresponding policy statement from the policy document.\r\n    - Policies are applied in the order of their appearance, from the top down.\r\n-->\r\n<policies>\r\n  <inbound></inbound>\r\n  <backend>\r\n    <forward-request />\r\n  </backend>\r\n  <outbound></outbound>\r\n</policies>",
+                "format": "xml"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/products",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/headers')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "displayName": "headers",
+                "description": "headers",
+                "subscriptionRequired": true,
+                "approvalRequired": false,
+                "state": "published"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/sample-api/get-headers')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'sample-api')]",
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "displayName": "headers",
+                "method": "GET",
+                "urlTemplate": "/headers",
+                "templateParameters": [],
+                "responses": []
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/policies",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/sample-api/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'sample-api')]",
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "value": "<!--\r\n    IMPORTANT:\r\n    - Policy elements can appear only within the <inbound>, <outbound>, <backend> section elements.\r\n    - To apply a policy to the incoming request (before it is forwarded to the backend service), place a corresponding policy element within the <inbound> section element.\r\n    - To apply a policy to the outgoing response (before it is sent back to the caller), place a corresponding policy element within the <outbound> section element.\r\n    - To add a policy, place the cursor at the desired insertion point and select a policy from the sidebar.\r\n    - To remove a policy, delete the corresponding policy statement from the policy document.\r\n    - Position the <base> element within a section element to inherit all policies from the corresponding section element in the enclosing scope.\r\n    - Remove the <base> element to prevent inheriting policies from the corresponding section element in the enclosing scope.\r\n    - Policies are applied in the order of their appearance, from the top down.\r\n    - Comments within policy elements are not supported and may disappear. Place your comments between policy elements or at a higher level scope.\r\n-->\r\n<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-header name=\"Correlation-Id\" exists-action=\"override\">\r\n      <value>@(context.RequestId.ToString(\"N\"))</value>\r\n    </set-header>\r\n    <cors>\r\n      <allowed-origins>\r\n        <origin>*</origin>\r\n      </allowed-origins>\r\n      <allowed-methods>\r\n        <method>GET</method>\r\n        <method>POST</method>\r\n        <method>PUT</method>\r\n        <method>DELETE</method>\r\n        <method>HEAD</method>\r\n        <method>OPTIONS</method>\r\n        <method>PATCH</method>\r\n        <method>TRACE</method>\r\n      </allowed-methods>\r\n      <allowed-headers>\r\n        <header>*</header>\r\n      </allowed-headers>\r\n      <expose-headers>\r\n        <header>*</header>\r\n      </expose-headers>\r\n    </cors>\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>",
+                "format": "xml"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/products/apis",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/headers/sample-api')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/products', parameters('apimName'), 'headers')]",
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/subscriptions",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/headers')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]",
+                "[resourceId('Microsoft.ApiManagement/service/products', parameters('apimName'), 'headers')]"
+            ],
+            "properties": {
+                "scope": "[resourceId('Microsoft.ApiManagement/service/products', parameters('apimName'), 'headers')]",
+                "displayName": "headers",
+                "state": "active",
+                "allowTracing": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+            "apiVersion": "2020-12-01",
+            "name": "[concat(parameters('apimName'), '/sample-api/get-headers/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), 'sample-api', 'get-headers')]",
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), 'sample-api')]",
+                "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+            ],
+            "properties": {
+                "value": "<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"sample-api-backend\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>",
+                "format": "xml"
+            }
+        }
+    ],
+    "outputs": {
+        "subscriptionKey": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('apimName'), 'headers'), '2019-01-01').primaryKey]"
+        }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionName": {
+            "value": "bjdfunc006"
+        },
+        "apimName": {
+            "value": "bjdapim006"
+        },
+        "uiStorageName": {
+            "value": "bjdui006"
+        },
+        "tenantId": {
+            "value": "834bd397-f53b-4659-92b8-e2ddddaee209"
+        },
+        "apiClientId": {
+            "value": "d315026a-4777-4150-8054-bf69cccc613a"
+        },
+        "apimClientId": {
+            "value": "f505558a-d23d-4d71-9977-dfbbbf3b3a0b"
+        }
+    }
+}
