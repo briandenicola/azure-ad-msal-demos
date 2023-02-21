@@ -1,0 +1,6 @@
+apiVersion: v2
+name:
+description: A demo app to call an API protected by Azure AD as a Managed Identity
+type: application
+version: 0.0.1
+appVersion: "1.0.0"

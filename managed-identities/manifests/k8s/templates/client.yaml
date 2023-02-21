@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ print .Values.APP_NAME "-aks-" .Values.NAMESPACE "-identity" }}
+  namespace: {{ .Values.NAMESPACE }}
+  annotations:
+    azure.workload.identity/client-id: {{ .Values.ARM_WORKLOAD_APP_ID }}
+    azure.workload.identity/tenant-id: {{ .Values.ARM_TENANT_ID }}
+  labels:
+    azure.workload.identity/use: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  namespace: {{ .Values.NAMESPACE }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: client
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: {{ print .Values.APP_NAME "-aks-" .Values.NAMESPACE "-identity" }} 
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000  
+        supplementalGroups: [2000]
+        fsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: client
+        image:  {{ print .Values.ACR_NAME "/client:" .Values.COMMIT_VERSION }} 
+        imagePullPolicy: Always
+        securityContext:
+          runAsNonRoot: true
+          readOnlyRootFilesystem: false
+          allowPrivilegeEscalation: false  
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "2"
+          requests:
+            memory: "128Mi"
+            cpu: "0.5"
